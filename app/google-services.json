@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "835497926330",
+    "firebase_url": "https://spacepal-c17b1-default-rtdb.firebaseio.com",
+    "project_id": "spacepal-c17b1",
+    "storage_bucket": "spacepal-c17b1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835497926330:android:6b3bde2be09500b4916c83",
+        "android_client_info": {
+          "package_name": "com.example.sp_v1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb0Ms9LW-WbgG2Vrmhq1qws1Fdgenl9p4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835497926330:android:ff4e6d2e31077225916c83",
+        "android_client_info": {
+          "package_name": "com.example.spacepal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb0Ms9LW-WbgG2Vrmhq1qws1Fdgenl9p4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

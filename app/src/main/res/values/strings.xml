@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">sp_v1</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="new_to_spacepal_register">New to SpacePal? Register</string>
+    <string name="email">Email</string>
+    <string name="log_out">Log Out</string>
+</resources>
