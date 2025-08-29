@@ -1,1 +1,1 @@
-now im stuck in fragmens of manager roles
+now im stuck in fragments of manager roles
