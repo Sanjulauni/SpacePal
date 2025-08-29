@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/ic_dashboard"
+            android:title="Dashboard" />
+        <item
+            android:id="@+id/nav_check_in"
+            android:icon="@drawable/ic_check_in"
+            android:title="Check-In" />
+        <item
+            android:id="@+id/nav_occupied"
+            android:icon="@drawable/ic_occupied"
+            android:title="Occupied Spots" />
+        <item
+            android:id="@+id/nav_my_spots"
+            android:icon="@drawable/ic_my_spots"
+            android:title="My Spots" />
+    </group>
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="Logout" />
+</menu>
