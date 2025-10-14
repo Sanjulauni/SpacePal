@@ -16,6 +16,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Sp_v1">
+
+        <activity
+            android:name=".ui.MyReservationsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.MapPickerActivity"
+            android:exported="false"
+            android:label="Select Location"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+
         <activity
             android:name=".ui.EditSpotActivity"
             android:exported="false" />
@@ -29,7 +40,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

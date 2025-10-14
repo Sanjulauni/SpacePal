@@ -66,4 +66,13 @@
         app:tint="@android:color/white"
         android:contentDescription="Logout" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/my_reservations_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_my_reservations" app:backgroundTint="@color/white"
+        android:contentDescription="My Reservations" />
+
 </RelativeLayout>

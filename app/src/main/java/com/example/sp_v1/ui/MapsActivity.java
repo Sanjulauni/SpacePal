@@ -81,6 +81,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
+
+        FloatingActionButton myReservationsButton = findViewById(R.id.my_reservations_button);
+        myReservationsButton.setOnClickListener(v -> {
+            startActivity(new Intent(MapsActivity.this, MyReservationsActivity.class));
+        });
     }
 
     @Override
@@ -148,17 +153,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
+    // NEW CORRECTED METHOD
+    // In MapsActivity.java
+
     private void proceedWithReservation(ParkingSpot spot, String userId) {
         dbHelper.createReservation(spot, userId, task -> {
-            if (task.isSuccessful()) {
+            if (task != null && task.isSuccessful()) {
                 Toast.makeText(MapsActivity.this, "Reservation successful!", Toast.LENGTH_SHORT).show();
                 hideSpotDetails();
             } else {
-                Toast.makeText(MapsActivity.this, "Reservation failed. Please try again.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MapsActivity.this, "Reservation failed. The spot might be full.", Toast.LENGTH_LONG).show();
             }
         });
     }
-
 
     private void hideSpotDetails() {
         if (spotDetailsCard.getVisibility() == View.VISIBLE) {

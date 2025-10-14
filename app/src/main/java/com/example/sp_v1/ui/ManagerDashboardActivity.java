@@ -12,7 +12,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import com.example.sp_v1.R;
 import com.example.sp_v1.auth.LoginActivity;
-import com.example.sp_v1.ui.manager.CheckInFragment;
 import com.example.sp_v1.ui.manager.DashboardFragment;
 import com.example.sp_v1.ui.manager.MySpotsFragment;
 import com.google.android.material.navigation.NavigationView;
@@ -39,35 +38,41 @@ public class ManagerDashboardActivity extends AppCompatActivity implements Navig
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
+        // Load the default fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new DashboardFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_dashboard);
-            getSupportActionBar().setTitle("Dashboard");
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("Dashboard");
+            }
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment selectedFragment = null;
+        String title = "";
         int itemId = item.getItemId();
 
         if (itemId == R.id.nav_dashboard) {
             selectedFragment = new DashboardFragment();
-            getSupportActionBar().setTitle("Dashboard");
+            title = "Dashboard";
         } else if (itemId == R.id.nav_my_spots) {
             selectedFragment = new MySpotsFragment();
-            getSupportActionBar().setTitle("My Spots");
-        } else if (itemId == R.id.nav_check_in) {
-            selectedFragment = new CheckInFragment();
-            getSupportActionBar().setTitle("Check-In");
+            title = "My Spots";
         } else if (itemId == R.id.nav_logout) {
             logout();
+            return true; // Logout action handled, no fragment to load
         }
 
         if (selectedFragment != null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    selectedFragment).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, selectedFragment)
+                    .commit();
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(title);
+            }
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -76,7 +81,9 @@ public class ManagerDashboardActivity extends AppCompatActivity implements Navig
 
     private void logout() {
         FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(this, LoginActivity.class));
+        Intent intent = new Intent(ManagerDashboardActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
         finish();
     }
 

@@ -1,6 +1,5 @@
 package com.example.sp_v1.utils;
 
-import android.util.Log;
 import androidx.annotation.NonNull;
 import com.example.sp_v1.models.ParkingSpot;
 import com.example.sp_v1.models.Reservation;
@@ -9,7 +8,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.List;
@@ -52,25 +53,58 @@ public class DatabaseHelper {
                 });
     }
 
+    // =================================================================================
+    // THIS IS THE NEW METHOD THAT WAS MISSING
+    // =================================================================================
     public void createReservation(ParkingSpot spot, String userId, OnCompleteListener<Void> listener) {
-        String reservationId = dbRootRef.child("reservations").push().getKey();
-        if (reservationId == null) {
-            listener.onComplete(null);
-            return;
-        }
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime + (60 * 60 * 1000);
-        Reservation reservation = new Reservation(reservationId, userId, spot.getId(), startTime, endTime, "active");
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("/reservations/" + reservationId, reservation);
-        updates.put("/parking_spots/" + spot.getId() + "/availableSpaces", spot.getAvailableSpaces() - 1);
-        if (spot.getAvailableSpaces() - 1 == 0) {
-            updates.put("/parking_spots/" + spot.getId() + "/available", false);
-        }
-        dbRootRef.updateChildren(updates).addOnCompleteListener(listener);
+        DatabaseReference spotRef = dbRootRef.child("parking_spots").child(spot.getId());
+
+        spotRef.runTransaction(new Transaction.Handler() {
+            @Override
+            @NonNull
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                ParkingSpot currentSpot = mutableData.getValue(ParkingSpot.class);
+                if (currentSpot == null) {
+                    return Transaction.success(mutableData);
+                }
+
+                if (currentSpot.getAvailableSpaces() > 0) {
+                    currentSpot.setAvailableSpaces(currentSpot.getAvailableSpaces() - 1);
+                    if (currentSpot.getAvailableSpaces() == 0) {
+                        currentSpot.setAvailable(false);
+                    }
+                    mutableData.setValue(currentSpot);
+                    return Transaction.success(mutableData);
+                } else {
+                    return Transaction.abort();
+                }
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+                if (committed) {
+                    DatabaseReference reservationsRef = dbRootRef.child("reservations");
+                    String reservationId = reservationsRef.push().getKey();
+
+                    Map<String, Object> reservationValues = new HashMap<>();
+                    reservationValues.put("id", reservationId);
+                    reservationValues.put("userId", userId);
+                    reservationValues.put("spotId", spot.getId());
+                    reservationValues.put("startTime", ServerValue.TIMESTAMP);
+                    reservationValues.put("endTime", 0L);
+                    reservationValues.put("status", "active");
+
+                    if (reservationId != null) {
+                        reservationsRef.child(reservationId).setValue(reservationValues).addOnCompleteListener(listener);
+                    }
+                } else {
+                    // Transaction failed (e.g., no spots were available), so we call the listener with a null task.
+                    listener.onComplete(null);
+                }
+            }
+        });
     }
 
-    // CORRECTED: This now fetches the list once and stops listening.
     public void getSpotsForManager(String managerId, ValueEventListener listener) {
         dbRootRef.child("parking_spots").orderByChild("managerId").equalTo(managerId)
                 .addListenerForSingleValueEvent(listener);
@@ -85,11 +119,13 @@ public class DatabaseHelper {
         if (spotId != null) {
             dbRootRef.child("parking_spots").child(spotId).setValue(spot).addOnCompleteListener(listener);
         } else {
-            listener.onComplete(null);
+            // This case should be rare, but it's good practice to handle it.
+            if (listener != null) {
+                listener.onComplete(null);
+            }
         }
     }
 
-    // CORRECTED: This now fetches the list once and stops listening.
     public void getReservationsByStatus(String status, ValueEventListener listener) {
         dbRootRef.child("reservations").orderByChild("status").equalTo(status)
                 .addListenerForSingleValueEvent(listener);

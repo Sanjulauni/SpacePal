@@ -6,14 +6,6 @@
             android:icon="@drawable/ic_dashboard"
             android:title="Dashboard" />
         <item
-            android:id="@+id/nav_check_in"
-            android:icon="@drawable/ic_check_in"
-            android:title="Check-In" />
-        <item
-            android:id="@+id/nav_occupied"
-            android:icon="@drawable/ic_occupied"
-            android:title="Occupied Spots" />
-        <item
             android:id="@+id/nav_my_spots"
             android:icon="@drawable/ic_my_spots"
             android:title="My Spots" />

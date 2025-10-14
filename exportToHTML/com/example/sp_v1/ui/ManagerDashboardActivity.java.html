@@ -1,0 +1,110 @@
+<html>
+<head>
+<title>ManagerDashboardActivity.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ManagerDashboardActivity.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">sp_v1</span><span class="s2">.</span><span class="s1">ui</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">android</span><span class="s2">.</span><span class="s1">content</span><span class="s2">.</span><span class="s1">Intent</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">android</span><span class="s2">.</span><span class="s1">os</span><span class="s2">.</span><span class="s1">Bundle</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">android</span><span class="s2">.</span><span class="s1">view</span><span class="s2">.</span><span class="s1">MenuItem</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">androidx</span><span class="s2">.</span><span class="s1">annotation</span><span class="s2">.</span><span class="s1">NonNull</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">androidx</span><span class="s2">.</span><span class="s1">appcompat</span><span class="s2">.</span><span class="s1">app</span><span class="s2">.</span><span class="s1">ActionBarDrawerToggle</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">androidx</span><span class="s2">.</span><span class="s1">appcompat</span><span class="s2">.</span><span class="s1">app</span><span class="s2">.</span><span class="s1">AppCompatActivity</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">androidx</span><span class="s2">.</span><span class="s1">appcompat</span><span class="s2">.</span><span class="s1">widget</span><span class="s2">.</span><span class="s1">Toolbar</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">androidx</span><span class="s2">.</span><span class="s1">core</span><span class="s2">.</span><span class="s1">view</span><span class="s2">.</span><span class="s1">GravityCompat</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">androidx</span><span class="s2">.</span><span class="s1">drawerlayout</span><span class="s2">.</span><span class="s1">widget</span><span class="s2">.</span><span class="s1">DrawerLayout</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">androidx</span><span class="s2">.</span><span class="s1">fragment</span><span class="s2">.</span><span class="s1">app</span><span class="s2">.</span><span class="s1">Fragment</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">sp_v1</span><span class="s2">.</span><span class="s1">R</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">sp_v1</span><span class="s2">.</span><span class="s1">auth</span><span class="s2">.</span><span class="s1">LoginActivity</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">sp_v1</span><span class="s2">.</span><span class="s1">ui</span><span class="s2">.</span><span class="s1">manager</span><span class="s2">.</span><span class="s1">CheckInFragment</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">sp_v1</span><span class="s2">.</span><span class="s1">ui</span><span class="s2">.</span><span class="s1">manager</span><span class="s2">.</span><span class="s1">DashboardFragment</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">example</span><span class="s2">.</span><span class="s1">sp_v1</span><span class="s2">.</span><span class="s1">ui</span><span class="s2">.</span><span class="s1">manager</span><span class="s2">.</span><span class="s1">MySpotsFragment</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">google</span><span class="s2">.</span><span class="s1">android</span><span class="s2">.</span><span class="s1">material</span><span class="s2">.</span><span class="s1">navigation</span><span class="s2">.</span><span class="s1">NavigationView</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">google</span><span class="s2">.</span><span class="s1">firebase</span><span class="s2">.</span><span class="s1">auth</span><span class="s2">.</span><span class="s1">FirebaseAuth</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">ManagerDashboardActivity </span><span class="s0">extends </span><span class="s1">AppCompatActivity </span><span class="s0">implements </span><span class="s1">NavigationView</span><span class="s2">.</span><span class="s1">OnNavigationItemSelectedListener </span><span class="s2">{</span>
+
+    <span class="s0">private </span><span class="s1">DrawerLayout drawerLayout</span><span class="s2">;</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">protected void </span><span class="s1">onCreate</span><span class="s2">(</span><span class="s1">Bundle savedInstanceState</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">.</span><span class="s1">onCreate</span><span class="s2">(</span><span class="s1">savedInstanceState</span><span class="s2">);</span>
+        <span class="s1">setContentView</span><span class="s2">(</span><span class="s1">R</span><span class="s2">.</span><span class="s1">layout</span><span class="s2">.</span><span class="s1">activity_manager_dashboard</span><span class="s2">);</span>
+
+        <span class="s1">Toolbar toolbar </span><span class="s2">= </span><span class="s1">findViewById</span><span class="s2">(</span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">toolbar</span><span class="s2">);</span>
+        <span class="s1">setSupportActionBar</span><span class="s2">(</span><span class="s1">toolbar</span><span class="s2">);</span>
+
+        <span class="s1">drawerLayout </span><span class="s2">= </span><span class="s1">findViewById</span><span class="s2">(</span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">drawer_layout</span><span class="s2">);</span>
+        <span class="s1">NavigationView navigationView </span><span class="s2">= </span><span class="s1">findViewById</span><span class="s2">(</span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">nav_view</span><span class="s2">);</span>
+        <span class="s1">navigationView</span><span class="s2">.</span><span class="s1">setNavigationItemSelectedListener</span><span class="s2">(</span><span class="s0">this</span><span class="s2">);</span>
+
+        <span class="s1">ActionBarDrawerToggle toggle </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ActionBarDrawerToggle</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s1">drawerLayout</span><span class="s2">, </span><span class="s1">toolbar</span><span class="s2">,</span>
+                <span class="s1">R</span><span class="s2">.</span><span class="s1">string</span><span class="s2">.</span><span class="s1">navigation_drawer_open</span><span class="s2">, </span><span class="s1">R</span><span class="s2">.</span><span class="s1">string</span><span class="s2">.</span><span class="s1">navigation_drawer_close</span><span class="s2">);</span>
+        <span class="s1">drawerLayout</span><span class="s2">.</span><span class="s1">addDrawerListener</span><span class="s2">(</span><span class="s1">toggle</span><span class="s2">);</span>
+        <span class="s1">toggle</span><span class="s2">.</span><span class="s1">syncState</span><span class="s2">();</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">savedInstanceState </span><span class="s2">== </span><span class="s0">null</span><span class="s2">) {</span>
+            <span class="s1">getSupportFragmentManager</span><span class="s2">().</span><span class="s1">beginTransaction</span><span class="s2">().</span><span class="s1">replace</span><span class="s2">(</span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">fragment_container</span><span class="s2">,</span>
+                    <span class="s0">new </span><span class="s1">DashboardFragment</span><span class="s2">()).</span><span class="s1">commit</span><span class="s2">();</span>
+            <span class="s1">navigationView</span><span class="s2">.</span><span class="s1">setCheckedItem</span><span class="s2">(</span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">nav_dashboard</span><span class="s2">);</span>
+            <span class="s1">getSupportActionBar</span><span class="s2">().</span><span class="s1">setTitle</span><span class="s2">(</span><span class="s3">&quot;Dashboard&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public boolean </span><span class="s1">onNavigationItemSelected</span><span class="s2">(</span><span class="s1">@NonNull MenuItem item</span><span class="s2">) {</span>
+        <span class="s1">Fragment selectedFragment </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+        <span class="s0">int </span><span class="s1">itemId </span><span class="s2">= </span><span class="s1">item</span><span class="s2">.</span><span class="s1">getItemId</span><span class="s2">();</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">itemId </span><span class="s2">== </span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">nav_dashboard</span><span class="s2">) {</span>
+            <span class="s1">selectedFragment </span><span class="s2">= </span><span class="s0">new </span><span class="s1">DashboardFragment</span><span class="s2">();</span>
+            <span class="s1">getSupportActionBar</span><span class="s2">().</span><span class="s1">setTitle</span><span class="s2">(</span><span class="s3">&quot;Dashboard&quot;</span><span class="s2">);</span>
+        <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">itemId </span><span class="s2">== </span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">nav_my_spots</span><span class="s2">) {</span>
+            <span class="s1">selectedFragment </span><span class="s2">= </span><span class="s0">new </span><span class="s1">MySpotsFragment</span><span class="s2">();</span>
+            <span class="s1">getSupportActionBar</span><span class="s2">().</span><span class="s1">setTitle</span><span class="s2">(</span><span class="s3">&quot;My Spots&quot;</span><span class="s2">);</span>
+        <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">itemId </span><span class="s2">== </span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">nav_check_in</span><span class="s2">) {</span>
+            <span class="s1">selectedFragment </span><span class="s2">= </span><span class="s0">new </span><span class="s1">CheckInFragment</span><span class="s2">();</span>
+            <span class="s1">getSupportActionBar</span><span class="s2">().</span><span class="s1">setTitle</span><span class="s2">(</span><span class="s3">&quot;Check-In&quot;</span><span class="s2">);</span>
+        <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">itemId </span><span class="s2">== </span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">nav_logout</span><span class="s2">) {</span>
+            <span class="s1">logout</span><span class="s2">();</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">selectedFragment </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) {</span>
+            <span class="s1">getSupportFragmentManager</span><span class="s2">().</span><span class="s1">beginTransaction</span><span class="s2">().</span><span class="s1">replace</span><span class="s2">(</span><span class="s1">R</span><span class="s2">.</span><span class="s1">id</span><span class="s2">.</span><span class="s1">fragment_container</span><span class="s2">,</span>
+                    <span class="s1">selectedFragment</span><span class="s2">).</span><span class="s1">commit</span><span class="s2">();</span>
+        <span class="s2">}</span>
+
+        <span class="s1">drawerLayout</span><span class="s2">.</span><span class="s1">closeDrawer</span><span class="s2">(</span><span class="s1">GravityCompat</span><span class="s2">.</span><span class="s1">START</span><span class="s2">);</span>
+        <span class="s0">return true</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">logout</span><span class="s2">() {</span>
+        <span class="s1">FirebaseAuth</span><span class="s2">.</span><span class="s1">getInstance</span><span class="s2">().</span><span class="s1">signOut</span><span class="s2">();</span>
+        <span class="s1">startActivity</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Intent</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s1">LoginActivity</span><span class="s2">.</span><span class="s0">class</span><span class="s2">));</span>
+        <span class="s1">finish</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">onBackPressed</span><span class="s2">() {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">drawerLayout</span><span class="s2">.</span><span class="s1">isDrawerOpen</span><span class="s2">(</span><span class="s1">GravityCompat</span><span class="s2">.</span><span class="s1">START</span><span class="s2">)) {</span>
+            <span class="s1">drawerLayout</span><span class="s2">.</span><span class="s1">closeDrawer</span><span class="s2">(</span><span class="s1">GravityCompat</span><span class="s2">.</span><span class="s1">START</span><span class="s2">);</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s0">super</span><span class="s2">.</span><span class="s1">onBackPressed</span><span class="s2">();</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>
