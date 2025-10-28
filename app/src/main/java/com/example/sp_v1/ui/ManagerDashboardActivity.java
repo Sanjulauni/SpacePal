@@ -2,97 +2,141 @@ package com.example.sp_v1.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
+import android.view.MenuItem; // Keep this import
+import androidx.annotation.NonNull; // Keep this import
+import androidx.appcompat.app.AlertDialog; // <-- Import AlertDialog
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
+// import androidx.appcompat.widget.Toolbar; // --- REMOVED ---
 import androidx.fragment.app.Fragment;
 import com.example.sp_v1.R;
 import com.example.sp_v1.auth.LoginActivity;
 import com.example.sp_v1.ui.manager.DashboardFragment;
+import com.example.sp_v1.ui.manager.MyEventsFragment;
 import com.example.sp_v1.ui.manager.MySpotsFragment;
-import com.google.android.material.navigation.NavigationView;
+import com.example.sp_v1.ui.manager.ProfileFragment;
+import com.example.sp_v1.ui.manager.SettingsFragment; // Keep for navigation target
+// --- Import BottomNavigationView ---
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ManagerDashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ManagerDashboardActivity extends AppCompatActivity {
 
-    private DrawerLayout drawerLayout;
+    private BottomNavigationView bottomNav;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager_dashboard);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mAuth = FirebaseAuth.getInstance();
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        // Check if user is logged in
+        if (mAuth.getCurrentUser() == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        // --- REMOVED Toolbar setup ---
+        // Toolbar toolbar = findViewById(R.id.toolbar);
+        // setSupportActionBar(toolbar);
+        // --- END REMOVAL ---
+
+        // Setup Bottom Navigation
+        bottomNav = findViewById(R.id.bottom_navigation_view_manager);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            Fragment selectedFragment = null;
+            // String title = ""; // Title no longer needed
+
+            if (itemId == R.id.nav_dashboard) {
+                selectedFragment = new DashboardFragment();
+                // title = "Dashboard";
+            } else if (itemId == R.id.nav_my_spots) {
+                selectedFragment = new MySpotsFragment();
+                // title = "My Spots";
+            } else if (itemId == R.id.nav_my_events) {
+                selectedFragment = new MyEventsFragment();
+                // title = "My Events";
+            } else if (itemId == R.id.nav_profile) {
+                selectedFragment = new ProfileFragment();
+                // title = "Profile";
+            }
+
+            if (selectedFragment != null) {
+                // --- Pass only the fragment ---
+                replaceFragment(selectedFragment);
+                return true; // Indicate event was handled
+            }
+            return false; // Indicate event was not handled
+        });
 
         // Load the default fragment
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new DashboardFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_dashboard);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle("Dashboard");
-            }
+            navigateToDashboard(); // Load dashboard by default
         }
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Fragment selectedFragment = null;
-        String title = "";
-        int itemId = item.getItemId();
-
-        if (itemId == R.id.nav_dashboard) {
-            selectedFragment = new DashboardFragment();
-            title = "Dashboard";
-        } else if (itemId == R.id.nav_my_spots) {
-            selectedFragment = new MySpotsFragment();
-            title = "My Spots";
-        } else if (itemId == R.id.nav_logout) {
-            logout();
-            return true; // Logout action handled, no fragment to load
-        }
-
-        if (selectedFragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, selectedFragment)
-                    .commit();
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(title);
-            }
-        }
-
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    private void logout() {
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(ManagerDashboardActivity.this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+    public void logoutUser() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (dialog, which) -> {
+                    mAuth.signOut();
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
+        if (bottomNav.getSelectedItemId() != R.id.nav_dashboard) {
+            // If not on Dashboard, go to Dashboard
+            bottomNav.setSelectedItemId(R.id.nav_dashboard);
+            // The listener above will handle the fragment replacement
         } else {
+            // If on Dashboard, exit the app
             super.onBackPressed();
         }
+    }
+
+    // --- Navigation Methods (Simplified) ---
+    public void navigateToDashboard() {
+        replaceFragment(new DashboardFragment());
+    }
+
+    public void navigateToMySpots() {
+        replaceFragment(new MySpotsFragment());
+    }
+
+    public void navigateToMyEvents() {
+        replaceFragment(new MyEventsFragment());
+    }
+
+    public void navigateToProfile() {
+        replaceFragment(new ProfileFragment());
+        if(bottomNav.getSelectedItemId() != R.id.nav_profile) {
+            bottomNav.getMenu().findItem(R.id.nav_profile).setChecked(true);
+        }
+    }
+
+    public void navigateToSettings() {
+        replaceFragment(new SettingsFragment());
+    }
+
+    // Helper method for fragment transactions (no title needed)
+    private void replaceFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
+        // --- REMOVED Title setting ---
+        // if (getSupportActionBar() != null) {
+        //     getSupportActionBar().setTitle(title);
+        // }
     }
 }

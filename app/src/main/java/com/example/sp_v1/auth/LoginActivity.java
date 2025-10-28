@@ -2,24 +2,23 @@ package com.example.sp_v1.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView; // Import TextView
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.example.sp_v1.R;
-import com.example.sp_v1.ui.MapsActivity;
+import com.example.sp_v1.ui.MainActivity;
 import com.example.sp_v1.ui.ManagerDashboardActivity;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private TextInputEditText emailInput, passwordInput;
     private MaterialButton loginButton;
+    private TextView goToRegisterText; // Add this
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +26,17 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
-        emailInput = findViewById(R.id.email_input);
-        passwordInput = findViewById(R.id.password_input);
+
+        // --- UPDATED VIEW IDs ---
+        emailInput = findViewById(R.id.email_edit_text);
+        passwordInput = findViewById(R.id.password_edit_text);
         loginButton = findViewById(R.id.login_button);
+        goToRegisterText = findViewById(R.id.go_to_register_text);
+        // --- END OF UPDATES ---
 
         loginButton.setOnClickListener(v -> loginUser());
 
-        findViewById(R.id.register_link).setOnClickListener(v ->
+        goToRegisterText.setOnClickListener(v -> // Updated variable
                 startActivity(new Intent(this, RegisterActivity.class)));
     }
 
@@ -66,18 +69,21 @@ public class LoginActivity extends AppCompatActivity {
                     if (dataSnapshot.exists()) {
                         String role = dataSnapshot.child("role").getValue(String.class);
                         Intent intent;
-                        if ("Driver".equals(role)) {
-                            intent = new Intent(this, MapsActivity.class);
-                        } else if ("Manager".equals(role)) {
+
+                        // UPDATED: Default to "Driver" if role is null or not recognized
+                        if ("Manager".equals(role)) {
                             intent = new Intent(this, ManagerDashboardActivity.class);
                         } else {
-                            Toast.makeText(this, "Invalid role", Toast.LENGTH_SHORT).show();
-                            return;
+                            // "Driver", "User", or anything else goes to MainActivity
+                            intent = new Intent(this, MainActivity.class);
                         }
+
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         finish();
                     } else {
                         Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show();
+                        mAuth.signOut();
                     }
                 })
                 .addOnFailureListener(e ->

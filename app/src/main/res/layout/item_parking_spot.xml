@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="6dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
@@ -13,21 +15,64 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/spot_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Parking Spot Name"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/spot_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="Parking Spot Name" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/spot_listed_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Listed" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/spot_availability"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Available: 0/0"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:text="Available: 5/10" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/spot_verification_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="✔ Title-Verified"
+                tools:textColor="@android:color/holo_green_dark"
+                tools:visibility="visible" />
+
+            <Button
+                android:id="@+id/btn_verify_spot"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Verify Ownership"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -1,40 +1,40 @@
 package com.example.sp_v1.adapters;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.sp_v1.R;
-import com.example.sp_v1.models.ParkingSpot;
 import com.example.sp_v1.models.Reservation;
 import com.example.sp_v1.models.User;
-import com.google.android.material.button.MaterialButton;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.example.sp_v1.models.ParkingSpot;
+import com.example.sp_v1.utils.DatabaseHelper;
+import com.example.sp_v1.utils.DateUtils;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class ReservationManagerAdapter extends RecyclerView.Adapter<ReservationManagerAdapter.ViewHolder> {
 
-    public interface OnReservationActionListener {
-        void onActionClick(Reservation reservation);
-    }
+    private final List<Reservation> reservations;
+    private final Map<String, ParkingSpot> spotMap;
+    private final Map<String, User> userMap;
+    private final Context context;
+    private final DatabaseHelper dbHelper;
 
-    private List<Reservation> reservations;
-    private Map<String, ParkingSpot> spotMap;
-    private Map<String, User> userMap;
-    private final OnReservationActionListener listener;
-    private int expandedPosition = -1;
-
-    public ReservationManagerAdapter(List<Reservation> reservations, Map<String, ParkingSpot> spotMap, Map<String, User> userMap, OnReservationActionListener listener) {
+    public ReservationManagerAdapter(Context context, List<Reservation> reservations, Map<String, ParkingSpot> spotMap, Map<String, User> userMap) {
+        this.context = context;
         this.reservations = reservations;
         this.spotMap = spotMap;
         this.userMap = userMap;
-        this.listener = listener;
+        this.dbHelper = new DatabaseHelper();
     }
 
     @NonNull
@@ -46,7 +46,7 @@ public class ReservationManagerAdapter extends RecyclerView.Adapter<ReservationM
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(reservations.get(position), position == expandedPosition, listener);
+        holder.bind(reservations.get(position));
     }
 
     @Override
@@ -54,62 +54,64 @@ public class ReservationManagerAdapter extends RecyclerView.Adapter<ReservationM
         return reservations.size();
     }
 
-    // Method to safely update the data and refresh the UI
-    public void updateData(List<Reservation> newReservations, Map<String, ParkingSpot> newSpotMap, Map<String, User> newUserMap) {
-        this.reservations = newReservations;
-        this.spotMap = newSpotMap;
-        this.userMap = newUserMap;
-        expandedPosition = -1; // Reset expanded state on new data
-        notifyDataSetChanged();
-    }
-
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView spotNameText, userEmailText, reservationTimeText;
-        LinearLayout expandableLayout;
-        MaterialButton actionButton;
+        TextView userNameText, spotNameText, reservationTimeText, reservationStatusText; // Added status text
+        Button checkoutButton;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
+            userNameText = itemView.findViewById(R.id.user_name_text);
             spotNameText = itemView.findViewById(R.id.spot_name_text);
-            userEmailText = itemView.findViewById(R.id.user_email_text);
             reservationTimeText = itemView.findViewById(R.id.reservation_time_text);
-            expandableLayout = itemView.findViewById(R.id.expandable_layout);
-            actionButton = itemView.findViewById(R.id.action_button);
+            reservationStatusText = itemView.findViewById(R.id.reservation_status_text); // Initialize status text
+            checkoutButton = itemView.findViewById(R.id.checkout_button);
         }
 
-        void bind(final Reservation reservation, final boolean isExpanded, final OnReservationActionListener listener) {
+        void bind(final Reservation reservation) {
             ParkingSpot spot = spotMap.get(reservation.getSpotId());
             User user = userMap.get(reservation.getUserId());
 
-            spotNameText.setText(spot != null ? spot.getName() : "Loading...");
-            userEmailText.setText(user != null ? user.getEmail() : "Loading...");
+            String userName = (user != null && user.getName() != null) ? user.getName() : "Unknown User";
+            userNameText.setText(userName);
+            spotNameText.setText("Spot: " + (spot != null ? spot.getName() : "Unknown Spot"));
+            String startTime = DateUtils.formatTimestamp(reservation.getStartTime());
+            reservationTimeText.setText("Reserved on: " + startTime);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            String startTime = sdf.format(new Date(reservation.getStartTime()));
-            String endTime = sdf.format(new Date(reservation.getEndTime()));
-            reservationTimeText.setText("Time: " + startTime + " - " + endTime);
-
-            // Correctly set button text for both states
-            if ("active".equals(reservation.getStatus())) {
-                actionButton.setText("Check-In");
-            } else if ("in-progress".equals(reservation.getStatus())) {
-                actionButton.setText("Check-Out");
+            // --- THIS IS THE CORRECTED LOGIC ---
+            if ("in-progress".equals(reservation.getStatus())) {
+                reservationStatusText.setText("Status: In-Progress");
+                // CHANGED: Using a standard, reliable blue color
+                reservationStatusText.setTextColor(Color.parseColor("#007BFF")); // A standard blue
+                checkoutButton.setVisibility(View.VISIBLE); // Show the button
+                checkoutButton.setOnClickListener(v -> {
+                    new AlertDialog.Builder(context)
+                            .setTitle("Confirm Check-Out")
+                            .setMessage("Are you sure you want to check out " + userName + "?")
+                            .setPositiveButton("Yes", (dialog, which) -> performCheckout(reservation))
+                            .setNegativeButton("No", null)
+                            .show();
+                });
+            } else if ("active".equals(reservation.getStatus())) {
+                reservationStatusText.setText("Status: Active (Arriving)");
+                reservationStatusText.setTextColor(Color.GRAY);
+                checkoutButton.setVisibility(View.GONE); // Hide the button
+            } else {
+                // For "completed", "cancelled", etc.
+                reservationStatusText.setText("Status: " + reservation.getStatus());
+                reservationStatusText.setTextColor(Color.GRAY);
+                checkoutButton.setVisibility(View.GONE); // Hide the button
             }
-
-            expandableLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-
-            itemView.setOnClickListener(v -> {
-                int previousExpandedPosition = expandedPosition;
-                expandedPosition = isExpanded ? -1 : getAdapterPosition();
-                if (previousExpandedPosition != -1) {
-                    notifyItemChanged(previousExpandedPosition);
-                }
-                if (expandedPosition != -1) {
-                    notifyItemChanged(expandedPosition);
-                }
-            });
-
-            actionButton.setOnClickListener(v -> listener.onActionClick(reservation));
         }
+    }
+
+    private void performCheckout(Reservation reservation) {
+        dbHelper.checkOutUser(reservation, task -> {
+            if (task != null && task.isSuccessful()) {
+                // The real-time listener in DashboardFragment will automatically update the list.
+                Toast.makeText(context, "User checked out successfully.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Check-out failed. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

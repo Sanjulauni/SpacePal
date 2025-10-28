@@ -82,7 +82,6 @@ public class EditSpotActivity extends AppCompatActivity {
                             spotNameEditText.setText(spotToEdit.getName());
                             totalSpacesEditText.setText(String.valueOf(spotToEdit.getTotalSlots()));
 
-                            // Set the location from existing data
                             selectedLocation = new LatLng(spotToEdit.getLatitude(), spotToEdit.getLongitude());
                             locationTextView.setText(String.format(Locale.getDefault(), "Lat: %.5f, Lng: %.5f",
                                     selectedLocation.latitude, selectedLocation.longitude));
@@ -115,13 +114,12 @@ public class EditSpotActivity extends AppCompatActivity {
             spotToSave.setTotalSlots(totalSpaces);
             spotToSave.setAvailableSpaces(Math.max(0, totalSpaces - occupied));
 
-            // Update location if it was changed
             if (selectedLocation != null) {
                 spotToSave.setLatitude(selectedLocation.latitude);
                 spotToSave.setLongitude(selectedLocation.longitude);
             }
 
-        } else { // Add Mode
+        } else { // Add Mode - This part is correct
             if (selectedLocation == null) {
                 Toast.makeText(this, "Please pick a location on the map.", Toast.LENGTH_SHORT).show();
                 return;

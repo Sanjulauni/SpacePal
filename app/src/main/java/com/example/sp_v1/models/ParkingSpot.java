@@ -1,6 +1,12 @@
 package com.example.sp_v1.models;
 
 public class ParkingSpot {
+
+    // ADDED: Constants for Spot Verification Status
+    public static final String STATUS_SPOT_UNVERIFIED = "UNVERIFIED";
+    public static final String STATUS_SPOT_PENDING_DEED = "PENDING_DEED";
+    public static final String STATUS_SPOT_TITLE_VERIFIED = "TITLE_VERIFIED";
+
     private String id;
     private String name;
     private double latitude;
@@ -11,10 +17,17 @@ public class ParkingSpot {
     private int occupiedSlots;
     private String managerId;
 
+    // ADDED: New fields for Tier 2 Verification
+    private String spotVerificationStatus;
+    private String deedImageUrl;
+
+    // --- NEW FIELD ---
+    private boolean isListed; // For the visibility switch
+
     // A no-argument constructor is required by Firebase
     public ParkingSpot() {}
 
-    // NEW: The constructor your code needs to create a new spot
+    // UPDATED: The constructor now sets a default verification status and listed status
     public ParkingSpot(String name, double latitude, double longitude, boolean available, String managerId, int totalSlots, int availableSpaces) {
         this.name = name;
         this.latitude = latitude;
@@ -23,12 +36,13 @@ public class ParkingSpot {
         this.managerId = managerId;
         this.totalSlots = totalSlots;
         this.availableSpaces = availableSpaces;
-        // Occupied can be calculated or set as needed
         this.occupiedSlots = totalSlots - availableSpaces;
+        this.spotVerificationStatus = STATUS_SPOT_UNVERIFIED;
+        this.isListed = true; // --- ADDED: Default to true
     }
 
 
-    // Getters and Setters for all fields
+    // --- Getters and Setters ---
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -56,4 +70,15 @@ public class ParkingSpot {
 
     public String getManagerId() { return managerId; }
     public void setManagerId(String managerId) { this.managerId = managerId; }
+
+    // ADDED: Getters and Setters for the new fields
+    public String getSpotVerificationStatus() { return spotVerificationStatus; }
+    public void setSpotVerificationStatus(String spotVerificationStatus) { this.spotVerificationStatus = spotVerificationStatus; }
+
+    public String getDeedImageUrl() { return deedImageUrl; }
+    public void setDeedImageUrl(String deedImageUrl) { this.deedImageUrl = deedImageUrl; }
+
+    // --- NEW GETTER/SETTER ---
+    public boolean isListed() { return isListed; }
+    public void setListed(boolean listed) { isListed = listed; }
 }

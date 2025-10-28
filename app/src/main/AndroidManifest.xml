@@ -15,43 +15,59 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Sp_v1">
+        android:theme="@style/Theme.SP_v1">
 
         <activity
-            android:name=".ui.MyReservationsActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.MapPickerActivity"
+            android:name=".ui.MainActivity"
             android:exported="false"
-            android:label="Select Location"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
-
-        <activity
-            android:name=".ui.EditSpotActivity"
-            android:exported="false" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
+            android:theme="@style/Theme.SP_v1.NoActionBar" />
 
         <activity
             android:name=".auth.LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.SP_v1.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".auth.RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.MapsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.SP_v1.NoActionBar" />
+
         <activity
             android:name=".ui.ManagerDashboardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SP_v1.NoActionBar" />
+
+        <activity
+            android:name=".ui.VerificationActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".ui.SpotVerificationActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.EditSpotActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.MapPickerActivity"
+            android:exported="false"
+            android:label="Select Location" />
+
+        <activity
+            android:name=".ui.manager.CreateEventActivity"
+            android:exported="false"
+            android:label="Create New Event" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
     </application>
 
 </manifest>
